@@ -31,4 +31,9 @@ public class GoodsServiceImpl implements GoodsService {
     public GoodsVo getGoodsVoById(long goodsId) {
         return goodsMapper.getGoodsVoById(goodsId);
     }
+
+    @Override
+    public GoodsVo getGoodsVoByGoodsId(Long goodsId) {
+        return goodsMapper.getGoodsVoById(goodsId);
+    }
 }

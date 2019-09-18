@@ -38,5 +38,13 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class RedisAutoConfig {
-
+    @Primary
+    @Bean("redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+        template.setConnectionFactory(factory);
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+        template.setKeySerializer(redisSerializer);
+        return template;
+    }
 }

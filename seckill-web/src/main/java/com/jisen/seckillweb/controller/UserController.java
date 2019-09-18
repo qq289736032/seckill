@@ -99,7 +99,7 @@ public class UserController {
         logger.info("RegisterVo = " + registerVo);
 
         if (registerVo == null) {
-            return Result.info(CodeMsg.REGISTER_FAIL);
+            throw new GlobalException(CodeMsg.FILL_REGISTER_INFO);
         }
 
         CodeMsg codeMsg = userServiceImpl.register(registerVo);

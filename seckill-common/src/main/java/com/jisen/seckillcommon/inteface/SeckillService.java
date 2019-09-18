@@ -5,4 +5,5 @@ package com.jisen.seckillcommon.inteface;
  * @date 2019/7/7 14:30
  */
 public interface SeckillService {
+    long getSeckillResult(Long uuid, long goodsId);
 }

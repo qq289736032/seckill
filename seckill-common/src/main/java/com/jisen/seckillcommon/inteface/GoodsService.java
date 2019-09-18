@@ -12,4 +12,6 @@ public interface GoodsService {
     List<GoodsVo> listGoods();
 
     GoodsVo getGoodsVoById(long goodsId);
+
+    GoodsVo getGoodsVoByGoodsId(Long goodsId);
 }
