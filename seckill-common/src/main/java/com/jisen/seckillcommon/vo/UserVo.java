@@ -14,8 +14,8 @@ import java.util.Date;
  */
 @Data
 public class UserVo implements Serializable {
-    private Long uuid;
-    private Long phone;
+    private String userId;
+    private String phone;
     private String nickname;
     private String password;
     private String salt;

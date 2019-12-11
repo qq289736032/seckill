@@ -115,6 +115,7 @@
                 goodsId: $("#goodsId").val()
             },
             success: function (data) {
+                debugger;
                 if (data.code == 0) {
                     //window.location.href="/order_detail.htm?orderId="+data.data.id;
                     getSkResult($("#goodsId").val());
@@ -138,6 +139,7 @@
                 goodsId: $("#goodsId").val()
             },
             success: function (data) {
+                debugger;
                 if (data.code == 0) {
                     var result = data.data;
                     if (result < 0) {

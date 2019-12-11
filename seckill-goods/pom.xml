@@ -31,7 +31,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.42.Final</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
@@ -51,6 +56,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

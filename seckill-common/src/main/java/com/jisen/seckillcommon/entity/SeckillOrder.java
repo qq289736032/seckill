@@ -14,7 +14,7 @@ import lombok.Setter;
 public class SeckillOrder {
 
     private Long id;
-    private Long userId;
+    private String userId;
     private Long orderId;
     private Long goodsId;
 

@@ -133,7 +133,7 @@ public class SeckillController implements InitializingBean {
         }
 
         //预减库存，同时在库存为0时标记该商品已经结束秒杀
-        //long decrement = redisTemplate.opsForValue().increment(GoodsKeyPrefix.GOODS_STOCK.getPrefix() +goodsId,-1L);
+
 
         Long decrement =(long) redisTemplate.execute((RedisCallback<Long>) redisConnection -> {
             Jedis jedis = (Jedis)redisConnection.getNativeConnection();
@@ -148,14 +148,14 @@ public class SeckillController implements InitializingBean {
 
         //判断是否重复秒杀
         //从redis中取缓存，减少数据库的访问
-        SeckillOrder seckillOrder = (SeckillOrder)redisTemplate.opsForValue().get(OrderKeyPrefix.SK_ORDER.getPrefix() + ":" + userVo.getUuid() + "_" + goodsId);
+        SeckillOrder seckillOrder = (SeckillOrder)redisTemplate.opsForValue().get(OrderKeyPrefix.SK_ORDER.getPrefix() + ":" + userVo.getUserId() + "_" + goodsId);
         if (seckillOrder == null){
-            seckillOrder = orderServiceImpl.getSeckillOrderByUserIdAndGoodsId(userVo.getUuid(),goodsId);
+            seckillOrder = orderServiceImpl.getSeckillOrderByUserIdAndGoodsId(userVo.getUserId(),goodsId);
         }
         if(seckillOrder != null){
             return Result.error(CodeMsg.REPEATE_SECKILL);//重复秒杀
         }
-        //商品有库存且用户为秒杀商品，则将秒杀请求放入MQ
+        //商品有库存且用户为秒杀商品，则将秒杀请求放入MQ，这里仅仅将请求放入mq去排队，起到了削峰的做用
         SkMessage skMessage = new SkMessage();
         skMessage.setUser(userVo);
         skMessage.setGoodsId(goodsId);
@@ -180,7 +180,7 @@ public class SeckillController implements InitializingBean {
         if (userVo == null || goodsId <= 0){
             return false;
         }
-        String oldPath = (String)redisTemplate.opsForValue().get(SkKeyPrefix.SK_PATH.getPrefix()+userVo.getUuid()+"_"+goodsId);
+        String oldPath = (String)redisTemplate.opsForValue().get(SkKeyPrefix.SK_PATH.getPrefix()+userVo.getUserId()+"_"+goodsId);
         return path.equals(oldPath);
     }
 
@@ -198,7 +198,7 @@ public class SeckillController implements InitializingBean {
         //随机生成秒杀地址
         String path = MD5Util.md5(UUIDUtil.uuid()+"123456");
         //将随机生成的秒杀地址存储在redis中（保证不同用户和不同商品的秒杀地址是不一样的）
-        redisTemplate.opsForValue().set(SkKeyPrefix.SK_PATH.getPrefix()+userVo.getUuid()+"_"+goodsId,path);
+        redisTemplate.opsForValue().set(SkKeyPrefix.SK_PATH.getPrefix()+userVo.getUserId()+"_"+goodsId,path);
         return path;
     }
 
@@ -214,12 +214,12 @@ public class SeckillController implements InitializingBean {
             return false;
         }
         //从redis中获取验证码计算结果
-        Integer oldCode = (Integer)redisTemplate.opsForValue().get(SkKeyPrefix.VERIFY_RESULT.getPrefix() + userVo.getUuid() + "_" + goodsId);
+        Integer oldCode = (Integer)redisTemplate.opsForValue().get(SkKeyPrefix.VERIFY_RESULT.getPrefix() + userVo.getUserId() + "_" + goodsId);
         if (oldCode == null || oldCode-veryfyCode != 0){
             return false;
         }
         //如果校验成功，则说明验证码过期，删除校验码缓存，防止重复提交同一个验证码
-        redisTemplate.delete(SkKeyPrefix.VERIFY_RESULT.getPrefix()+userVo.getUuid()+"_"+goodsId);
+        redisTemplate.delete(SkKeyPrefix.VERIFY_RESULT.getPrefix()+userVo.getUserId()+"_"+goodsId);
         return true;
     }
 
@@ -235,7 +235,7 @@ public class SeckillController implements InitializingBean {
     @ResponseBody
     public Result<Long> getSeckillResult(Model model, UserVo userVo,@RequestParam("goodsId") long goodsId){
         model.addAttribute("user",userVo);
-        long result = seckillServiceImpl.getSeckillResult(userVo.getUuid(),goodsId);
+        long result = seckillServiceImpl.getSeckillResult(userVo.getUserId(),goodsId);
         return Result.success(result);
     }
 
@@ -256,15 +256,15 @@ public class SeckillController implements InitializingBean {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
         //刷新验证码时让缓存中的随机地址无效
-        String path = (String)redisTemplate.opsForValue().get(SkKeyPrefix.SK_PATH.getPrefix() + userVo.getUuid() + "_" + goodsId);
+        String path = (String)redisTemplate.opsForValue().get(SkKeyPrefix.SK_PATH.getPrefix() + userVo.getUserId() + "_" + goodsId);
         if (path != null){
-            redisTemplate.delete(SkKeyPrefix.SK_PATH.getPrefix() + userVo.getUuid() + "_" + goodsId);
+            redisTemplate.delete(SkKeyPrefix.SK_PATH.getPrefix() + userVo.getUserId() + "_" + goodsId);
         }
         try {
             //创建验证码
             VerifyCodeVo verifyCode = VerifyCodeUtil.createVerifyCode();
             //验证码结果预先存到redis中
-            redisTemplate.opsForValue().set(SkKeyPrefix.VERIFY_RESULT.getPrefix()+userVo.getUuid()+"_"+goodsId,verifyCode.getExpResult());
+            redisTemplate.opsForValue().set(SkKeyPrefix.VERIFY_RESULT.getPrefix()+userVo.getUserId()+"_"+goodsId,verifyCode.getExpResult());
             ServletOutputStream outputStream = response.getOutputStream();
             ImageIO.write(verifyCode.getImage(),"JPEG",outputStream);
 
@@ -288,7 +288,13 @@ public class SeckillController implements InitializingBean {
 
         // 将商品的库存信息存储在redis中
         for (GoodsVo good : goods) {
-            redisTemplate.opsForValue().set(GoodsKeyPrefix.GOODS_STOCK.getPrefix()+good.getId(), good.getStockCount());
+            redisTemplate.execute((RedisCallback<String>) redisConnection -> {
+                Jedis jedis = (Jedis)redisConnection.getNativeConnection();
+                String set = jedis.set(GoodsKeyPrefix.GOODS_STOCK.getPrefix() + good.getId(), String.valueOf(good.getStockCount()));
+                return set;
+            });
+
+            //redisTemplate.opsForValue().set(GoodsKeyPrefix.GOODS_STOCK.getPrefix()+good.getId(), good.getStockCount());
             // 在系统启动时，标记库存不为空
             localOverMap.put(good.getId(), false);
         }

@@ -17,7 +17,7 @@ public interface SeckillUserMapper {
      * @param phone
      * @return
      */
-    SeckillUser getUserByPhone(@Param("phone") Long phone);
+    SeckillUser getUserByPhone(@Param("phone") String phone);
 
     /**
      * 更新用户信息

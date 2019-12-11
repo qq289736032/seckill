@@ -65,7 +65,7 @@ public interface UserService {
      * @param loginVo
      * @return
      */
-    String login(@Valid LoginVo loginVo);
+    UserInfoVo login(@Valid LoginVo loginVo);
 
     /**
      * 根据phone获取用户
@@ -73,6 +73,6 @@ public interface UserService {
      * @param phone
      * @return
      */
-    UserVo getUserByPhone(long phone);
+    UserVo getUserByPhone(String phone);
 
 }

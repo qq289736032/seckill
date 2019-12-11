@@ -14,4 +14,6 @@ public interface GoodsService {
     GoodsVo getGoodsVoById(long goodsId);
 
     GoodsVo getGoodsVoByGoodsId(Long goodsId);
+
+    boolean reduceStock(Long goodsId);
 }

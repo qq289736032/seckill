@@ -16,7 +16,7 @@ import java.util.Date;
 @Setter
 public class OrderInfo implements Serializable {
     private Long id;
-    private Long userId;
+    private String userId;
     private Long goodsId;
     private Long deliveryAddrId;
     private String goodsName;

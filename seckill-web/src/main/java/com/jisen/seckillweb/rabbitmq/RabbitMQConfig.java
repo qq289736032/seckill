@@ -26,12 +26,12 @@ public class RabbitMQConfig {
      */
     public static final String SECKILL_QUEUE = "seckill.queue";
 
-     @Bean
-     public Queue deviceData(@Qualifier("rabbitAdmin") RabbitAdmin rabbitAdmin) {
-         Queue queue = new Queue(SECKILL_QUEUE);
-         rabbitAdmin.declareQueue(queue);
-         return queue;
-     }
+//     @Bean
+//     public Queue deviceData(@Qualifier("rabbitAdmin") RabbitAdmin rabbitAdmin) {
+//         Queue queue = new Queue(SECKILL_QUEUE);
+//         rabbitAdmin.declareQueue(queue);
+//         return queue;
+//     }
 
      @Bean("rabbitAdmin")
      public RabbitAdmin rabbitAdmin(@Qualifier("connectionFactory") ConnectionFactory connectionFactory) {

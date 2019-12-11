@@ -16,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2019/6/29 20:04
  */
 @Service
-@Component
 public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
@@ -35,5 +34,16 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public GoodsVo getGoodsVoByGoodsId(Long goodsId) {
         return goodsMapper.getGoodsVoById(goodsId);
+    }
+
+    /**
+     * 减库存，是真的减
+     * @param goodsId
+     * @return
+     */
+    @Override
+    public boolean reduceStock(Long goodsId) {
+        int ret = goodsMapper.reduceStack(goodsId);
+        return ret > 0;
     }
 }

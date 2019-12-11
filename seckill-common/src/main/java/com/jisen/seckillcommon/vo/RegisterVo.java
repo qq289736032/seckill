@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 public class RegisterVo implements Serializable {
     @NotNull
-    private Long phone;
+    private String phone;
     @NotNull
     private String nickname;
 

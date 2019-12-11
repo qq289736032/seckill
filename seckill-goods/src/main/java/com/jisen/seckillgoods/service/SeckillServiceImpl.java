@@ -30,7 +30,7 @@ public class SeckillServiceImpl implements SeckillService {
      * @return
      */
     @Override
-    public long getSeckillResult(Long uuid, long goodsId) {
+    public long getSeckillResult(String uuid, long goodsId) {
         SeckillOrder order = orderServiceImpl.getSeckillOrderByUserIdAndGoodsId(uuid, goodsId);
         if (order != null){
             return order.getOrderId();

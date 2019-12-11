@@ -77,7 +77,9 @@ public class UserServiceImpl implements UserService {
             return CodeMsg.USER_EXIST;
         }
         //生成skuser对象
+
         SeckillUser seckillUser = new SeckillUser();
+        seckillUser.setUserId(UUIDUtil.uuid());
         seckillUser.setPhone(userModel.getPhone());
         seckillUser.setNickname(userModel.getNickname());
         seckillUser.setHead(userModel.getHead());
@@ -121,14 +123,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String login(@Valid LoginVo loginVo) {
+    public UserInfoVo login(@Valid LoginVo loginVo) {
         logger.info("登录操作{}",loginVo.toString());
         //获取用户提交的手机号码和密码
         String mobile = loginVo.getMobile();
         String password = loginVo.getPassword();
 
         //判断手机号是否存在（先从缓存中取再从数据库取）
-        SeckillUser seckillUserByPhone = this.getSeckillUserByPhone(Long.parseLong(mobile));
+        SeckillUser seckillUserByPhone = this.getSeckillUserByPhone(mobile);
         if(seckillUserByPhone==null){
             throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
         }
@@ -146,16 +148,21 @@ public class UserServiceImpl implements UserService {
         String token = UUIDUtil.uuid();
         redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN+token,seckillUserByPhone);
 
-        return token;
+        //返回userInfo到前端
+        UserInfoVo userInfoVo = new UserInfoVo();
+        userInfoVo.setUserId(seckillUserByPhone.getUserId());
+        userInfoVo.setNickname(seckillUserByPhone.getNickname());
+        userInfoVo.setPhone(seckillUserByPhone.getPhone());
+        return userInfoVo;
     }
 
     @Override
-    public UserVo getUserByPhone(long phone) {
+    public UserVo getUserByPhone(String phone) {
 
         UserVo userVo = new UserVo();
         SeckillUser user = seckillUserMapper.getUserByPhone(phone);
 
-        userVo.setUuid(user.getUuid());
+        userVo.setUserId(user.getUserId());
         userVo.setSalt(user.getSalt());
         userVo.setRegisterDate(user.getRegisterDate());
         userVo.setPhone(user.getPhone());
@@ -168,7 +175,7 @@ public class UserServiceImpl implements UserService {
         return userVo;
     }
 
-    public SeckillUser getSeckillUserByPhone(Long phone) {
+    public SeckillUser getSeckillUserByPhone(String phone) {
         //从redis中获取用户缓存数据
         SeckillUser seckillUser = (SeckillUser) redisTemplate.opsForValue().get(SkUserKeyPrefix.SK_USER_PHONE.getPrefix() + "_" + phone);
         if(seckillUser!=null){

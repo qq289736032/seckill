@@ -53,6 +53,12 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.42.Final</version>
+        </dependency>
 
         <!-- Zookeeper dependencies -->
         <dependency>

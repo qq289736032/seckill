@@ -5,6 +5,7 @@ import com.jisen.seckillcommon.exception.GlobalException;
 import com.jisen.seckillcommon.result.Result;
 import com.jisen.seckillcommon.vo.LoginVo;
 import com.jisen.seckillcommon.vo.RegisterVo;
+import com.jisen.seckillcommon.vo.UserInfoVo;
 import com.jisen.seckillcommon.vo.profix.SkUserKeyPrefix;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -60,18 +61,20 @@ public class UserController {
      */
     @PostMapping(value = "/login")
     @ResponseBody
-    public Result<Boolean> login(HttpServletResponse response, @Valid LoginVo loginVo) {
+    public Result login(HttpServletResponse response, @Valid LoginVo loginVo) {
 
-        String token = userServiceImpl.login(loginVo);
-        logger.info("token: " + token);
+        UserInfoVo userInfoVo = userServiceImpl.login(loginVo);
+        logger.info("token: " + userInfoVo.toString());
 
         // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
-        Cookie cookie = new Cookie(UserService.COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
-        cookie.setPath("/");
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie(UserService.COOKIE_NAME_TOKEN, token);
+//        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+
+
         // 返回登陆成功
-        return Result.success(true);
+        return Result.success(userInfoVo);
     }
 
 
