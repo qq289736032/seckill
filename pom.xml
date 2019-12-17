@@ -37,6 +37,9 @@
         <dubbo.version>2.7.1</dubbo.version>
         <fastjson.version>1.2.38</fastjson.version>
         <top-version>0.0.1</top-version>
+        <!--跳过单元测试 -->
+        <maven.test.skip>true</maven.test.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
     <dependencyManagement>
@@ -183,21 +186,20 @@
     </dependencyManagement>
 
 
-
     <build>
         <pluginManagement>
 
             <plugins>
 
-                <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                    <!--<version>3.1</version>-->
-                    <!--<configuration>-->
-                        <!--<source>${java.version}</source>-->
-                        <!--<target>${java.version}</target>-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
 
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
