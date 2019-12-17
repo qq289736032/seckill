@@ -15,6 +15,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class OrderInfo implements Serializable {
+
+    private static final long serialVersionUID = -2436840207135054525L;
     private Long id;
     private String userId;
     private Long goodsId;

@@ -1,11 +1,13 @@
 package com.jisen.seckillweb.controller;
 
+import com.jisen.seckillcommon.entity.SeckillUser;
 import com.jisen.seckillcommon.inteface.GoodsService;
 import com.jisen.seckillcommon.result.Result;
 import com.jisen.seckillcommon.vo.GoodsVo;
 import com.jisen.seckillcommon.vo.GoodsDetailVo;
 import com.jisen.seckillcommon.vo.UserVo;
 import com.jisen.seckillcommon.vo.profix.GoodsKeyPrefix;
+import com.jisen.seckillcommon.vo.profix.SkUserKeyPrefix;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -52,20 +55,29 @@ public class GoodsController {
      */
     @RequestMapping(value = "/goodsList",produces = "text/html")
     @ResponseBody
-    public String goodList(HttpServletRequest request, HttpServletResponse response, Model model, UserVo userVo){
+    public String goodList(HttpServletRequest request, HttpServletResponse response, Model model,UserVo userVo){
         logger.info("获取商品列表");
+
+        //从redis中获取用户
+        //SeckillUser seckillUser = (SeckillUser)redisTemplate.opsForValue().get(SkUserKeyPrefix.TOKEN.getPrefix()+userToken);
 
         //1,从redis中获取缓存的页面
         String redisGoodsListHtml = (String)redisTemplate.opsForValue().get(GoodsKeyPrefix.GOODS_LIST_HTML.getPrefix());
+
+
         if(StringUtils.isNotEmpty(redisGoodsListHtml)){
             return redisGoodsListHtml;
         }
 
+
+
+
         //2，如果为空则要绚染页面
         //查询商品列表，用于手动渲染时将商品数据填充的页面
         List<GoodsVo> goodList = goodsServiceImpl.listGoods();
-        model.addAttribute("goodsList",goodList);
         model.addAttribute("user",userVo);
+        model.addAttribute("goodsList",goodList);
+
 
         //3，渲染页面
         WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());

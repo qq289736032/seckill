@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jisen.seckilluser.mapper.SeckillUserMapper">
 
-    <resultMap type="com.jisen.seckilluser.entity.SeckillUser" id="seckillUser">
-        <result property="uuid" column="UUID"/>
+    <resultMap type="com.jisen.seckillcommon.entity.SeckillUser" id="seckillUser">
+        <result property="userId" column="UUID"/>
         <result property="phone" column="phone"/>
         <result property="nickname" column="nickname"/>
         <result property="password" column="password"/>
@@ -16,7 +16,7 @@
         <result property="loginCount" column="login_count"/>
     </resultMap>
 
-    <select id="getUserByPhone" parameterType="java.lang.Long" resultType="seckillUser">
+    <select id="getUserByPhone" parameterType="java.lang.String" resultMap="seckillUser">
         SELECT *
         FROM seckill_user
         WHERE phone = #{phone}
@@ -26,12 +26,12 @@
     <insert id="insertUser" parameterType="com.jisen.seckillcommon.entity.SeckillUser" useGeneratedKeys="true">
         INSERT INTO seckill_user (phone, nickname, password, salt, head, register_date, last_login_date, login_count)
         VALUES (#{phone}, #{nickname}, #{password}, #{salt}, #{head}, #{registerDate}, #{lastLoginDate}, #{loginCount})
-        <selectKey keyColumn="UUID" keyProperty="uuid" resultType="java.lang.Long">
+        <selectKey keyColumn="UUID" keyProperty="userId" resultType="java.lang.String">
             SELECT last_insert_id()
         </selectKey>
     </insert>
 
-    <select id="findPhone" parameterType="java.lang.Long" resultType="java.lang.Long">
+    <select id="findPhone" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT phone
         FROM seckill_user
         WHERE phone = #{phone}

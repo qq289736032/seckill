@@ -63,18 +63,17 @@ public class UserController {
     @ResponseBody
     public Result login(HttpServletResponse response, @Valid LoginVo loginVo) {
 
-        UserInfoVo userInfoVo = userServiceImpl.login(loginVo);
-        logger.info("token: " + userInfoVo.toString());
+        String token = userServiceImpl.login(loginVo);
+        logger.info("token: " + token);
 
         // 将token写入cookie中, 然后传给客户端（一个cookie对应一个用户，这里将这个cookie的用户信息写入redis中）
-//        Cookie cookie = new Cookie(UserService.COOKIE_NAME_TOKEN, token);
-//        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-
+        Cookie cookie = new Cookie(UserService.COOKIE_NAME_TOKEN, token);
+        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());// 保持与redis中的session一致
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         // 返回登陆成功
-        return Result.success(userInfoVo);
+        return Result.success(true);
     }
 
 

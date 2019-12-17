@@ -4,6 +4,7 @@ package com.jisen.seckillcommon.entity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,8 +15,10 @@ import java.util.Date;
  */
 
 public class SeckillUser implements Serializable {
-    private Long uuid;
-    private Long phone;
+
+    private static final long serialVersionUID = -7620150784156162796L;
+    private String userId;
+    private String phone;
     private String nickname;
     private String password;
     private String salt;
@@ -24,19 +27,19 @@ public class SeckillUser implements Serializable {
     private Date lastLoginDate;
     private Integer loginCount;
 
-    public Long getUuid() {
-        return uuid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUuid(Long uuid) {
-        this.uuid = uuid;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public Long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

@@ -15,6 +15,9 @@ import java.util.Date;
 @Setter
 @Getter
 public class SeckillGoods implements Serializable {
+
+
+    private static final long serialVersionUID = 6466602460766990393L;
     private Long id;
     private Long goodsId;
     private Double seckillPrice;

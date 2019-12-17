@@ -1,6 +1,6 @@
 package com.jisen.seckilluser.mapper;
 
-import com.jisen.seckilluser.entity.SeckillUser;
+import com.jisen.seckillcommon.entity.SeckillUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;

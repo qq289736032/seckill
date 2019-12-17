@@ -1,6 +1,7 @@
 package com.jisen.seckillweb.mvcconfig.intercepter;
 
 import com.alibaba.fastjson.JSON;
+import com.jisen.seckillcommon.entity.SeckillUser;
 import com.jisen.seckillcommon.inteface.UserService;
 import com.jisen.seckillcommon.result.CodeMsg;
 import com.jisen.seckillcommon.result.Result;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -39,7 +41,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      * 每个用户的请求对应一个线程，所以使用ThreadLocal以线程为键保存用户是合适的
      *
      */
-    private static ThreadLocal<UserVo> userVoThreadLocal = new ThreadLocal<>();
+    public static ThreadLocal<UserVo> userVoThreadLocal = new ThreadLocal<>();
 
     @Reference(interfaceClass = UserService.class)
     private UserService userService;
@@ -167,8 +169,23 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
             return null;
         }
         //从redis中获取user
-        UserVo userVo = (UserVo) redisTemplate.opsForValue().get(SkUserKeyPrefix.TOKEN + token);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        SeckillUser seckillUser = (SeckillUser)redisTemplate.opsForValue().get(SkUserKeyPrefix.TOKEN.getPrefix()+token);
         //UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
+
+        UserVo userVo = null;
+        if (seckillUser != null){
+            userVo = new UserVo();
+            userVo.setPhone(seckillUser.getPhone());
+            userVo.setNickname(seckillUser.getNickname());
+//        userVo.setUserId(seckillUser.getUserId());
+            userVo.setHead(seckillUser.getHead());
+            userVo.setLoginCount(seckillUser.getLoginCount());
+            userVo.setLastLoginDate(seckillUser.getLastLoginDate());
+            userVo.setRegisterDate(seckillUser.getRegisterDate());
+            userVo.setSalt(seckillUser.getSalt());
+        }
+
 
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
@@ -206,7 +223,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
 
-        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN+token,user);
+        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN.getPrefix()+token, user);
         //redisService.set(SkUserKeyPrefix.TOKEN, token, user);
 
         Cookie cookie = new Cookie(UserService.COOKIE_NAME_TOKEN, token);

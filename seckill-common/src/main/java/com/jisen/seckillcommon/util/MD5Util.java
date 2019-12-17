@@ -2,7 +2,6 @@ package com.jisen.seckillcommon.util;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Test;
 
 /**
  * MD5工具类
@@ -70,13 +69,6 @@ public class MD5Util {
     }
 
 
-    /**
-     * 测试
-     */
-    @Test
-    public void TestMD5() {
-        System.out.println(inputPassToFormPass("000000"));
-        System.out.println(inputPassToDbPass("000000", SALT));
-    }
+
 
 }

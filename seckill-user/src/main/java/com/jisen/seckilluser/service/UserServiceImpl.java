@@ -1,7 +1,7 @@
 package com.jisen.seckilluser.service;
 
 
-import com.jisen.seckilluser.entity.SeckillUser;
+import com.jisen.seckillcommon.entity.SeckillUser;
 import com.jisen.seckillcommon.exception.GlobalException;
 import com.jisen.seckillcommon.inteface.UserService;
 import com.jisen.seckillcommon.redislock.RedisLock;
@@ -123,7 +123,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoVo login(@Valid LoginVo loginVo) {
+    public String login(@Valid LoginVo loginVo) {
+
+
         logger.info("登录操作{}",loginVo.toString());
         //获取用户提交的手机号码和密码
         String mobile = loginVo.getMobile();
@@ -146,14 +148,9 @@ public class UserServiceImpl implements UserService {
 
         //登录成功
         String token = UUIDUtil.uuid();
-        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN+token,seckillUserByPhone);
+        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN.getPrefix()+token, seckillUserByPhone);
 
-        //返回userInfo到前端
-        UserInfoVo userInfoVo = new UserInfoVo();
-        userInfoVo.setUserId(seckillUserByPhone.getUserId());
-        userInfoVo.setNickname(seckillUserByPhone.getNickname());
-        userInfoVo.setPhone(seckillUserByPhone.getPhone());
-        return userInfoVo;
+        return token;
     }
 
     @Override

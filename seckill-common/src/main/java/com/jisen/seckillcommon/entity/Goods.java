@@ -16,6 +16,8 @@ import java.io.Serializable;
 @Setter
 @ToString
 public class Goods implements Serializable {
+
+    private static final long serialVersionUID = 2372064155862817752L;
     private Long id;
     private String goodsName;
     private String goodsTitle;

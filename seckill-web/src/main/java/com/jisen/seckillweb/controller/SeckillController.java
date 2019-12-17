@@ -17,6 +17,7 @@ import com.jisen.seckillcommon.vo.VerifyCodeVo;
 import com.jisen.seckillcommon.vo.profix.GoodsKeyPrefix;
 import com.jisen.seckillcommon.vo.profix.OrderKeyPrefix;
 import com.jisen.seckillcommon.vo.profix.SkKeyPrefix;
+import com.jisen.seckillweb.mvcconfig.intercepter.AccessInterceptor;
 import com.jisen.seckillweb.mvcconfig.intercepter.AccessLimit;
 import com.jisen.seckillweb.rabbitmq.RabbitMQConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -244,13 +245,15 @@ public class SeckillController implements InitializingBean {
      * 使用HttpServletResponse的输出流返回客户端异步获取的验证码（异步获取的代码如上所示）
      *
      * @param response
-     * @param userVo
      * @param goodsId
      * @return
      */
     @RequestMapping(value = "/verifyCode",method = RequestMethod.GET)
     @ResponseBody
-    public Result<String> getVerifyCode(HttpServletResponse response,UserVo userVo,@RequestParam("goodsId") long goodsId){
+    public Result<String> getVerifyCode(HttpServletResponse response,@RequestParam("goodsId") long goodsId){
+
+        UserVo userVo = AccessInterceptor.userVoThreadLocal.get();
+
         log.info("获取验证码");
         if (userVo == null || goodsId<=0){
             return Result.error(CodeMsg.SESSION_ERROR);

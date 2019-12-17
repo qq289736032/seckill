@@ -1,5 +1,11 @@
 package com.jisen.seckillcommon.beanautoconfig;
 
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.dubbo.common.serialize.Serialization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
@@ -36,15 +44,14 @@ import java.time.Duration;
  * @date 2019/6/14 21:19
  */
 @Configuration
-@EnableCaching
+//@EnableCaching
 public class RedisAutoConfig {
-    @Primary
+    //@Primary
     @Bean("redisTemplate")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+    public RedisTemplate<String, Serialization> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Serialization> template = new RedisTemplate<String, Serialization>();
         template.setConnectionFactory(factory);
-        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
-        template.setKeySerializer(redisSerializer);
+        template.setKeySerializer(new StringRedisSerializer());
         return template;
     }
 }

@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface OrderMapper {
     @Select("select * from seckill_order where user_id=#{userId} AND goods_id=#{goodsId}")
-    SeckillOrder getSeckillOrderByUserIdAndGoodsId(@Param("userId")String uuid, @Param("goodsId")Long goodsId);
+    SeckillOrder getSeckillOrderByUserIdAndGoodsId(@Param("userId")String userId, @Param("goodsId")Long goodsId);
 
     @Select("select * from order_info where id=#{orderId}")
     OrderInfo getOrderById(@Param("orderId")Long orderId);

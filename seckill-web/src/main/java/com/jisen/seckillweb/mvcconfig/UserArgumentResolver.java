@@ -1,5 +1,6 @@
 package com.jisen.seckillweb.mvcconfig;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jisen.seckillcommon.inteface.UserService;
 import com.jisen.seckillcommon.vo.UserVo;
 import com.jisen.seckillcommon.vo.profix.SkUserKeyPrefix;
@@ -90,10 +91,10 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
         // 通过token就可以在redis中查出该token对应的用户对象
 
-        UserVo userVo = (UserVo)redisTemplate.opsForValue().get(SkUserKeyPrefix.TOKEN.getPrefix()+token);
-
+        Object o = redisTemplate.opsForValue().get(SkUserKeyPrefix.TOKEN.getPrefix()+token);
+        UserVo userVo = (UserVo) o;
         //UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
-        logger.info("获取userVo：" + userVo.toString());
+        //logger.info("获取userVo：" + userVo.toString());
 
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果
         if (userVo != null) {
@@ -135,7 +136,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
      */
     private void addCookie(HttpServletResponse response, String token, UserVo user) {
 
-        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN.getPrefix()+token,user);
+        redisTemplate.opsForValue().set(SkUserKeyPrefix.TOKEN.getPrefix()+token, JSONObject.toJSONString(user));
 
         //redisService.set(SkUserKeyPrefix.TOKEN, token, user);
 

@@ -100,8 +100,11 @@
                 console.log("success");
                 layer.closeAll();
                 if (data.code == 0) {
+                    debugger;
                     layer.msg("成功");
+                    //登录成功之后没有把用户带上
                     window.location.href = "/goods/goodsList";
+                    //goodsList(data);
                 } else {
                     layer.msg(data.msg);
                 }
@@ -116,6 +119,39 @@
         });
     }
 
+    // function goodsList(data) {
+    //     $.ajax({
+    //         url: "/goods/goodsList",// 请求的资源
+    //         type: "POST",
+    //         /*post请求体中的数据*/
+    //         data: {
+    //             userId:data.userId,
+    //             phone:data.phone,
+    //             nickname:data.nickname,
+    //         },
+    //
+    //         // 请求成功时候的回调（data为服务端返回的json对象，其中封装的是CodeMsg对象的数据）
+    //         success: function (data) {
+    //             console.log("success");
+    //             layer.closeAll();
+    //             if (data.code == 0) {
+    //                 debugger;
+    //                 layer.msg("成功");
+    //                 //登录成功之后没有把用户带上
+    //             } else {
+    //                 layer.msg(data.msg);
+    //             }
+    //             console.log(data);// 在控制台打印json返回
+    //         },
+    //
+    //         // 请求失败时候的回调
+    //         error: function () {
+    //             alert();
+    //             layer.closeAll();
+    //         }
+    //     });
+    // }
+    
     /*登录*/
     function register() {
         window.location.href = "/user/doRegister";
