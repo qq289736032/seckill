@@ -35,7 +35,7 @@
         <mysql.vsersion>8.0.12</mysql.vsersion>
         <druid.version>1.0.5</druid.version>
         <dubbo.version>2.7.1</dubbo.version>
-        <fastjson.version>1.2.38</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <top-version>0.0.1</top-version>
         <!--跳过单元测试 -->
         <maven.test.skip>true</maven.test.skip>
