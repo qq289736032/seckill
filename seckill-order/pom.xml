@@ -138,7 +138,7 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-amqp</artifactId>
-            <version>2.1.5.RELEASE</version>
+            <version>2.3.11</version>
         </dependency>
         <!--rabbitmq依赖-->
         <dependency>
